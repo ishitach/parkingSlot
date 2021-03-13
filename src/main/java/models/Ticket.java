@@ -23,5 +23,5 @@ public class Ticket {
 
     int slotNo;
 
-
+    boolean isBottom;
 }
