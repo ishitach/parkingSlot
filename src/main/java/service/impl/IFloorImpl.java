@@ -22,7 +22,7 @@ public class IFloorImpl implements IFloor {
         for(int i=0;i<floors;i++){
             ParkingFloor parkingFloor = new ParkingFloor();
             List<ParkingSlot> slotsList = new ArrayList<ParkingSlot>();
-            for(int j=1;j<=20;j++){
+            for(int j=1;j<=4;j++){
                 ParkingSlot slot = new ParkingSlot();
                 slot.setSlotNo(j);
                 slotsList.add(slot);
@@ -42,21 +42,27 @@ public class IFloorImpl implements IFloor {
 
         for(Map.Entry<Integer, ParkingFloor> i: floorMap.entrySet()){
 
-            for (ParkingSlot slot: i.getValue().getSlots()){
-                if(!slot.isBottomFull() ){
-                    slot.setBottomFull(true);
-                    ticket.setEntryTime(System.currentTimeMillis());
-                    ticket.setFloorNo(i.getValue().getFloorNumber());
-                    ticket.setSlotNo(slot.getSlotNo());
-                    ticket.setVehicleId(vehicle.getVehicleId());
-                    return ticket;
+            List<ParkingSlot> slots = i.getValue().getSlots();
 
-                }else if(!slot.isTopFull()){
-                    slot.setTopFull(true);
-                    ticket.setEntryTime(System.currentTimeMillis());
-                    ticket.setFloorNo(i.getValue().getFloorNumber());
-                    ticket.setSlotNo(slot.getSlotNo());
-                    ticket.setVehicleId(vehicle.getVehicleId());
+            for (int slot=0;slot<2;slot++){
+                ParkingSlot currentSlot = slots.get(slot);
+                Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
+                if(ticketAlloted!=null){
+                    ticket = ticketAlloted;
+                    return ticket;
+                }
+            }
+        }
+
+        for(Map.Entry<Integer, ParkingFloor> i: floorMap.entrySet()){
+
+            List<ParkingSlot> slots = i.getValue().getSlots();
+
+            for (int slot=2;slot<slots.size();slot++){
+                ParkingSlot currentSlot = slots.get(slot);
+                Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
+                if(ticketAlloted!=null){
+                    ticket = ticketAlloted;
                     return ticket;
                 }
             }
@@ -65,22 +71,46 @@ public class IFloorImpl implements IFloor {
         return ticket;
     }
 
-    public boolean removeVehicle(Ticket ticket){
+    private Ticket formTicket(Vehicle vehicle, ParkingSlot slot, Ticket ticket, Integer floorNo){
 
-//        Ticket ticket = new Ticket();
-//        ticketCounter++;
-//        ticket.setTicketId(ticketCounter);
+        ticket.setEntryTime(System.currentTimeMillis());
+        ticket.setFloorNo(floorNo);
+        ticket.setSlotNo(slot.getSlotNo());
+        ticket.setVehicleId(vehicle.getVehicleId());
+
+        if(!slot.isBottomFull() ){
+            slot.setBottomFull(true);
+            ticket.setBottom(true);
+
+        }else if(!slot.isTopFull()){
+            slot.setTopFull(true);
+            ticket.setBottom(false);
+        }
+        else {
+            return null;
+        }
+        return ticket;
+    }
+
+    public boolean removeVehicle(Ticket ticket){
 
         if(ticket.getTicketId() > ticketCounter){
             return false;
         }
 
         ParkingFloor floor = floorMap.get(ticket.getFloorNo());
-        floor.getSlots().get(ticket.getSlotNo()).setBottomFull(false);
+        if(ticket.isBottom()){
+            floor.getSlots().get(ticket.getSlotNo()-1).setBottomFull(false);
+        }else{
+            floor.getSlots().get(ticket.getSlotNo()-1).setTopFull(false);
+        }
         ticket.setExitTime(System.currentTimeMillis());
-        int cost = (int)(ticket.getExitTime()-ticket.getEntryTime())/60000;
+        int cost = (int)(ticket.getExitTime()-ticket.getEntryTime()+10)*20;
         cost = (int) Math.ceil(cost);
         ticket.setCost(cost);
+
+        System.out.println(floor.toString());
+        System.out.println("after "+ ticket.toString());
 
         return true;
     }
