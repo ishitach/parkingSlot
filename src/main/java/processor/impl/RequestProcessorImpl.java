@@ -12,6 +12,7 @@ public class RequestProcessorImpl implements RequestProcessor {
 
     FloorImpl floor;
 
+    private static RequestProcessorImpl requestProcessor;
 
     public boolean createParkingSystem(int floors){
         floor = new FloorImpl();
