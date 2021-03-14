@@ -8,7 +8,7 @@ import models.Vehicle;
  */
 public interface RequestProcessor  {
 
-    public boolean createParkingSystem(int floors);
+    public void createParkingSystem(int floors);
 
     public Object parkingRequest(int input, Object object);
 
