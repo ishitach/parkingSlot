@@ -14,9 +14,10 @@ public class RequestProcessorImpl implements RequestProcessor {
 
     private static RequestProcessorImpl requestProcessor;
 
-    public boolean createParkingSystem(int floors){
+    public void createParkingSystem(int floors){
         floor = new FloorImpl();
-        return floor.createSystem(floors);
+        floor.createSystem(floors);
+        return;
     }
 
     public synchronized Object parkingRequest(int input, Object object) {
