@@ -1,6 +1,6 @@
 package service.impl;
 
-import dto.AddVehicleResponse;
+import dao.DatabaseService;
 import models.ParkingFloor;
 import models.ParkingSlot;
 import models.Ticket;
@@ -17,27 +17,16 @@ import java.util.*;
  */
 public class FloorImpl implements IFloor {
 
-    Map<Integer, ParkingFloor> floorMap;
+
     int ticketCounter = 0;
-    int floors;
+
     IParkingStratergy iParkingStratergy;
 
-    public boolean createSystem(int floors) {
-        floorMap = new HashMap<Integer, ParkingFloor>();
-        this.floors = floors;
-        for(int i=0;i<floors;i++){
-            ParkingFloor parkingFloor = new ParkingFloor();
-            List<ParkingSlot> slotsList = new ArrayList<ParkingSlot>();
-            for(int j=1;j<=20;j++){
-                ParkingSlot slot = new ParkingSlot();
-                slot.setSlotNo(j);
-                slotsList.add(slot);
-            }
-            parkingFloor.setSlots(slotsList);
-            parkingFloor.setFloorNumber(i+1);
-            floorMap.put(i+1, parkingFloor);
-        }
-        return true;
+    DatabaseService databaseService;
+
+    public void createSystem(int floors) {
+        databaseService = DatabaseService.getInstance(floors);
+        return;
     }
 
     public synchronized Ticket addVehicle(Vehicle vehicle){
@@ -77,17 +66,13 @@ public class FloorImpl implements IFloor {
             //floor 1 and 2 reserved for elderly
             case ELDERLY:
 
-                for(Map.Entry<Integer, ParkingFloor> i: floorMap.entrySet()){
+                for(Map.Entry<Integer, ParkingFloor> i: databaseService.getFloorMap().entrySet()){
                     if(i.getValue().isFull()){
                         continue;
                     }
 
                     for (ParkingSlot slot: i.getValue().getSlots()){
                         Ticket ticketAlloted = formTicket(vehicle, slot, ticket, i.getValue().getFloorNumber());
-//                        if(slot.getSlotNo() == i.getValue().getSlots().size()-1 && slot.isBottomFull() && slot.isTopFull()){
-//                            i.getValue().setFull(true);
-//                        }
-
 
                         if(ticketAlloted!=null){
                             i.getValue().setParkingFull();
@@ -100,14 +85,12 @@ public class FloorImpl implements IFloor {
                 break;
             case NORMAL:
 
-//                use floor val instead of map for iteration
                 iParkingStratergy = new NormalParkingStratergy();
-                Iterator<Map.Entry<Integer, ParkingFloor>> floorItr = floorMap.entrySet().iterator();
+                Iterator<Map.Entry<Integer, ParkingFloor>> floorItr = databaseService.getFloorMap().entrySet().iterator();
 
                 for(int i=1;i<=2;i++){
                     floorItr.next();
                 }
-
 
                 while(floorItr.hasNext())
                 {
@@ -132,23 +115,20 @@ public class FloorImpl implements IFloor {
                     }
                 }
 
-                Iterator<Map.Entry<Integer, ParkingFloor>> itrNew = floorMap.entrySet().iterator();
+                Iterator<Map.Entry<Integer, ParkingFloor>> itrNew = databaseService.getFloorMap().entrySet().iterator();
 
                 for(int i=1;i<=2;i++){
                     itrNew.next();
                 }
 
-
                 while(itrNew.hasNext())
                 {
-
                     Map.Entry<Integer, ParkingFloor> i = itrNew.next();
                     if(i.getValue().isFull()){
                         continue;
                     }
 
                     List<ParkingSlot> slots = i.getValue().getSlots();
-
                     ParkingSlot slot = iParkingStratergy.add(slots);
 
                     if(slot ==null) {
@@ -167,7 +147,7 @@ public class FloorImpl implements IFloor {
                 break;
             case ROYAL:
                 iParkingStratergy = new RoyalParkingStratergy();
-                Iterator<Map.Entry<Integer, ParkingFloor>> itr = floorMap.entrySet().iterator();
+                Iterator<Map.Entry<Integer, ParkingFloor>> itr = databaseService.getFloorMap().entrySet().iterator();
 
                 for(int i=1;i<=2;i++){
                     itr.next();
@@ -196,7 +176,7 @@ public class FloorImpl implements IFloor {
                         }
                 }
 
-                Iterator<Map.Entry<Integer, ParkingFloor>> itrSecond = floorMap.entrySet().iterator();
+                Iterator<Map.Entry<Integer, ParkingFloor>> itrSecond = databaseService.getFloorMap().entrySet().iterator();
 
                 for(int i=1;i<=2;i++){
                     itrSecond.next();
@@ -233,7 +213,7 @@ public class FloorImpl implements IFloor {
             return false;
         }
 
-        ParkingFloor floor = floorMap.get(ticket.getFloorNo());
+        ParkingFloor floor = databaseService.getFloorMap().get(ticket.getFloorNo());
         if(ticket != null){
             if(ticket.isBottom()){
                 floor.getSlots().get(ticket.getSlotNo()-1).setBottomFull(false);
