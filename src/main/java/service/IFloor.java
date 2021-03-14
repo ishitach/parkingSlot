@@ -1,6 +1,5 @@
 package service;
 
-import dto.AddVehicleResponse;
 import models.Ticket;
 import models.Vehicle;
 
@@ -9,7 +8,7 @@ import models.Vehicle;
  */
 public interface IFloor {
 
-    public boolean createSystem(int floors);
+    public void createSystem(int floors);
 
     public Ticket addVehicle(Vehicle vehicle);
 
