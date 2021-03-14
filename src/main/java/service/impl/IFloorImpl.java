@@ -22,7 +22,7 @@ public class IFloorImpl implements IFloor {
         for(int i=0;i<floors;i++){
             ParkingFloor parkingFloor = new ParkingFloor();
             List<ParkingSlot> slotsList = new ArrayList<ParkingSlot>();
-            for(int j=1;j<=4;j++){
+            for(int j=1;j<=3;j++){
                 ParkingSlot slot = new ParkingSlot();
                 slot.setSlotNo(j);
                 slotsList.add(slot);
@@ -40,34 +40,7 @@ public class IFloorImpl implements IFloor {
         ticketCounter++;
         ticket.setTicketId(ticketCounter);
 
-        for(Map.Entry<Integer, ParkingFloor> i: floorMap.entrySet()){
-
-            List<ParkingSlot> slots = i.getValue().getSlots();
-
-            for (int slot=0;slot<2;slot++){
-                ParkingSlot currentSlot = slots.get(slot);
-                Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
-                if(ticketAlloted!=null){
-                    ticket = ticketAlloted;
-                    return ticket;
-                }
-            }
-        }
-
-        for(Map.Entry<Integer, ParkingFloor> i: floorMap.entrySet()){
-
-            List<ParkingSlot> slots = i.getValue().getSlots();
-
-            for (int slot=2;slot<slots.size();slot++){
-                ParkingSlot currentSlot = slots.get(slot);
-                Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
-                if(ticketAlloted!=null){
-                    ticket = ticketAlloted;
-                    return ticket;
-                }
-            }
-        }
-
+        checkAvailibilty(vehicle, ticket);
         return ticket;
     }
 
@@ -92,6 +65,166 @@ public class IFloorImpl implements IFloor {
         return ticket;
     }
 
+    private Ticket checkAvailibilty(Vehicle vehicle, Ticket ticket){
+
+        switch (vehicle.getPassengerType()){
+            //floor 1 and 2 reserved for elderly
+            case ELDERLY:
+
+                for(Map.Entry<Integer, ParkingFloor> i: floorMap.entrySet()){
+
+                    for (ParkingSlot slot: i.getValue().getSlots()){
+                        Ticket ticketAlloted = formTicket(vehicle, slot, ticket, i.getValue().getFloorNumber());
+                        if(slot.getSlotNo() == i.getValue().getSlots().size()-1 && slot.isBottomFull() && slot.isTopFull()){
+                            i.getValue().setFull(true);
+                        }
+
+                        if(ticketAlloted!=null){
+                            ticket = ticketAlloted;
+                            return ticket;
+                        }
+                    }
+                }
+
+                break;
+            case NORMAL:
+
+                Iterator<Map.Entry<Integer, ParkingFloor>> itr = floorMap.entrySet().iterator();
+
+                for(int i=1;i<=2;i++){
+                    itr.next();
+                }
+
+
+                while(itr.hasNext())
+                {
+                    Map.Entry<Integer, ParkingFloor> i = itr.next();
+
+                    List<ParkingSlot> slots = i.getValue().getSlots();
+
+                    for (int slot=0;slot<2;slot++){
+                        ParkingSlot currentSlot = slots.get(slot);
+                        Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
+
+                        if(slot == slots.size()-1 && currentSlot.isBottomFull() && currentSlot.isTopFull()){
+                            i.getValue().setFull(true);
+                        }
+
+                        if(ticketAlloted!=null){
+                            ticket = ticketAlloted;
+                            return ticket;
+                        }
+                    }
+                }
+
+                Iterator<Map.Entry<Integer, ParkingFloor>> itrSecond = floorMap.entrySet().iterator();
+
+                for(int i=1;i<=2;i++){
+                    itrSecond.next();
+                }
+
+
+                while(itrSecond.hasNext())
+                {
+
+
+                    Map.Entry<Integer, ParkingFloor> i = itrSecond.next();
+                    List<ParkingSlot> slots = i.getValue().getSlots();
+
+                    for (int slot=2;slot<slots.size();slot++){
+                        ParkingSlot currentSlot = slots.get(slot);
+                        Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
+
+                        if(slot == slots.size()-1 && currentSlot.isBottomFull() && currentSlot.isTopFull()){
+                            i.getValue().setFull(true);
+                        }
+
+                        if(ticketAlloted!=null){
+                            ticket = ticketAlloted;
+                            return ticket;
+                        }
+                    }
+
+                }
+                break;
+            case ROYAL:
+
+//                Iterator<Map.Entry<Integer, ParkingFloor>> itrOne = floorMap.entrySet().iterator();
+//
+//                for(int i=1;i<=2;i++){
+//                    itrOne.next();
+//                }
+//
+//
+//                while(itrOne.hasNext())
+//                {
+//                    Map.Entry<Integer, ParkingFloor> i = itrOne.next();
+//
+//                    List<ParkingSlot> slots = i.getValue().getSlots();
+//
+//                    for (int slot=0;slot<2;slot++){
+//                        ParkingSlot currentSlot = slots.get(slot);
+//                        Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
+//
+//                        if(slot == slots.size()-1){
+//                            continue;
+//                        }else if(slot == slots.size()-2){
+//                            ticketAlloted = formTicket(vehicle, slots.get(slot+1), ticket, i.getValue().getFloorNumber());
+//                        }else{
+//
+//                        }
+//
+//                        if(slot == slots.size()-1 && currentSlot.isBottomFull() && currentSlot.isTopFull()){
+//                            i.getValue().setFull(true);
+//                        }
+//
+//                        if(ticketAlloted!=null){
+//                            ticket = ticketAlloted;
+//                            return ticket;
+//                        }
+//                    }
+//                }
+//
+//                Iterator<Map.Entry<Integer, ParkingFloor>> itrNew = floorMap.entrySet().iterator();
+//
+//                for(int i=1;i<=2;i++){
+//                    itrNew.next();
+//                }
+//
+//
+//                while(itrNew.hasNext())
+//                {
+//
+//
+//                    Map.Entry<Integer, ParkingFloor> i = itrNew.next();
+//                    List<ParkingSlot> slots = i.getValue().getSlots();
+//
+//                    for (int slot=2;slot<slots.size();slot++){
+//                        ParkingSlot currentSlot = slots.get(slot);
+//                        Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
+//
+//                        if(slot == slots.size()-1){
+//                            continue;
+//                        }
+//
+//                        if(slot == slots.size()-1 && currentSlot.isBottomFull() && currentSlot.isTopFull()){
+//                            i.getValue().setFull(true);
+//                        }
+//
+//                        if(ticketAlloted!=null){
+//                            ticket = ticketAlloted;
+//                            return ticket;
+//                        }
+//                    }
+//
+//                }
+
+
+                break;
+        }
+        return ticket;
+    }
+
     public boolean removeVehicle(Ticket ticket){
 
         if(ticket.getTicketId() > ticketCounter){
@@ -104,6 +237,8 @@ public class IFloorImpl implements IFloor {
         }else{
             floor.getSlots().get(ticket.getSlotNo()-1).setTopFull(false);
         }
+
+        //clear full floor val
         ticket.setExitTime(System.currentTimeMillis());
         int cost = (int)(ticket.getExitTime()-ticket.getEntryTime()+10)*20;
         cost = (int) Math.ceil(cost);
