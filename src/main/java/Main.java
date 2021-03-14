@@ -21,9 +21,10 @@ public class Main {
         Scanner s = new Scanner(System.in);
 //        int n = s.nextInt();
 //        ParkingSystem system = ParkingSystem.getInstance(n);
-        int floors = 2;
+        int floors = 4;
 
-        Vehicle v1 = Vehicle.builder().passengerType(Passengers.NORMAL).vehicleId(1).vehicleNumber("MP092728").vehicleType(CAR).build();
+        Vehicle v1 = Vehicle.builder().passengerType(Passengers.ELDERLY).vehicleId(1).vehicleNumber("MP092728").vehicleType(CAR).build();
+        Vehicle v2 = Vehicle.builder().passengerType(Passengers.NORMAL).vehicleId(1).vehicleNumber("MP092728").vehicleType(CAR).build();
 
 //        system.addVehicle(v1);
         RequestProcessor requestProcessor = new RequestProcessorImpl();
@@ -31,14 +32,20 @@ public class Main {
 
 //        Ticket t2 = (Ticket) requestProcessor.parkingRequest(0, v1);
         Ticket t1 = new Ticket();
-        for(int i=0;i<15;i++){
+        for(int i=0;i<3;i++){
+            t1 = (Ticket) requestProcessor.parkingRequest(0, v2);
+            System.out.println(t1.toString());
+
+        }
+
+        for(int i=0;i<3;i++){
             t1 = (Ticket) requestProcessor.parkingRequest(0, v1);
             System.out.println(t1.toString());
 
         }
 
-        System.out.println("before "+ t1.toString());
-        requestProcessor.parkingRequest(1,t1);
+//        System.out.println("before "+ t1.toString());
+//        requestProcessor.parkingRequest(1,t1);
 
     }
 
