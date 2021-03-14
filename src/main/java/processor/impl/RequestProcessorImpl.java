@@ -3,18 +3,18 @@ package processor.impl;
 import models.Ticket;
 import models.Vehicle;
 import processor.RequestProcessor;
-import service.impl.IFloorImpl;
+import service.impl.FloorImpl;
 
 /**
  * Created by ishita.chourasia on 07/03/21.
  */
 public class RequestProcessorImpl implements RequestProcessor {
 
-    IFloorImpl floor;
+    FloorImpl floor;
 
 
     public boolean createParkingSystem(int floors){
-        floor = new IFloorImpl();
+        floor = new FloorImpl();
         return floor.createSystem(floors);
     }
 
