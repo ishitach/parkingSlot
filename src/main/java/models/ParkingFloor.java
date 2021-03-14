@@ -17,4 +17,19 @@ public class ParkingFloor {
 
     boolean isFull;
 
+    public synchronized void setParkingFull(){
+
+        for (ParkingSlot slot: slots) {
+            if(!slot.isBottomFull() || !slot.isTopFull()){
+                this.isFull = false;
+                return;
+            }
+        }
+        this.isFull = true;
+    }
+
+    public synchronized void updateParkingFull(){
+        this.isFull = false;
+    }
+
 }
