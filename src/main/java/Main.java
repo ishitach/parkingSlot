@@ -26,6 +26,7 @@ public class Main {
 
         Vehicle v1 = Vehicle.builder().passengerType(Passengers.ELDERLY).vehicleId(1).vehicleNumber("MP092728").vehicleType(CAR).build();
         Vehicle v2 = Vehicle.builder().passengerType(Passengers.NORMAL).vehicleId(1).vehicleNumber("MP092728").vehicleType(CAR).build();
+        Vehicle v3 = Vehicle.builder().passengerType(Passengers.ROYAL).vehicleId(1).vehicleNumber("MP092728").vehicleType(CAR).build();
 
 //        system.addVehicle(v1);
         RequestProcessor requestProcessor = new RequestProcessorImpl();
@@ -41,17 +42,13 @@ public class Main {
             else {
                 System.out.println(t1.toString());
             }
-
-
         }
 
-//        for(int i=0;i<3;i++){
-//            t1 = (Ticket) requestProcessor.parkingRequest(0, v1);
-//            System.out.println(t1.toString());
-//
-//        }
+        for(int i=0;i<3;i++){
+            t1 = (Ticket) requestProcessor.parkingRequest(0, v3);
+            System.out.println(t1.toString());
+        }
 
-//        System.out.println("before "+ t1.toString());
         requestProcessor.parkingRequest(1,t1);
 
     }
