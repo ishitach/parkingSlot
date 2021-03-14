@@ -8,6 +8,7 @@ import models.Vehicle;
 import service.IFloor;
 import stratergy.IParkingStratergy;
 import stratergy.impl.NormalParkingStratergy;
+import stratergy.impl.RoyalParkingStratergy;
 
 import java.util.*;
 
@@ -165,12 +166,12 @@ public class FloorImpl implements IFloor {
 
                 break;
             case ROYAL:
+                iParkingStratergy = new RoyalParkingStratergy();
                 Iterator<Map.Entry<Integer, ParkingFloor>> itr = floorMap.entrySet().iterator();
 
                 for(int i=1;i<=2;i++){
                     itr.next();
                 }
-
 
                 while(itr.hasNext())
                 {
@@ -180,18 +181,19 @@ public class FloorImpl implements IFloor {
                     }
 
                     List<ParkingSlot> slots = i.getValue().getSlots();
+                    ParkingSlot slot = iParkingStratergy.add(slots);
 
-                    for (int slot=0;slot<2;slot++){
-                        ParkingSlot currentSlot = slots.get(slot);
+                    if(slot ==null) {
+                        continue;
+                    }
 
-                        Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
+                        Ticket ticketAlloted = formTicket(vehicle, slot, ticket, i.getValue().getFloorNumber());
 
                         i.getValue().setParkingFull();
                         if(ticketAlloted!=null){
                             ticket = ticketAlloted;
                             return;
                         }
-                    }
                 }
 
                 Iterator<Map.Entry<Integer, ParkingFloor>> itrSecond = floorMap.entrySet().iterator();
@@ -199,33 +201,27 @@ public class FloorImpl implements IFloor {
                 for(int i=1;i<=2;i++){
                     itrSecond.next();
                 }
-
-
                 while(itrSecond.hasNext())
                 {
-
-
                     Map.Entry<Integer, ParkingFloor> i = itrSecond.next();
                     if(i.getValue().isFull()){
                         continue;
                     }
 
                     List<ParkingSlot> slots = i.getValue().getSlots();
+                    ParkingSlot slot = iParkingStratergy.add(slots);
 
-                    for (int slot=2;slot<slots.size();slot++){
-                        ParkingSlot currentSlot = slots.get(slot);
-                        Ticket ticketAlloted = formTicket(vehicle, currentSlot, ticket, i.getValue().getFloorNumber());
+                    if(slot ==null) {
+                        continue;
+                    }
+                        Ticket ticketAlloted = formTicket(vehicle, slot, ticket, i.getValue().getFloorNumber());
 
                         i.getValue().setParkingFull();
                         if(ticketAlloted!=null){
                             ticket = ticketAlloted;
                             return;
                         }
-                    }
-
                 }
-
-
                 break;
         }
         return;
@@ -253,7 +249,6 @@ public class FloorImpl implements IFloor {
 
         System.out.println(floor.toString());
         System.out.println("after "+ ticket.toString());
-
         return true;
     }
 
