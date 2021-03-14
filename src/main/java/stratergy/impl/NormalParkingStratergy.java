@@ -13,7 +13,7 @@ public class NormalParkingStratergy implements IParkingStratergy {
 
     public ParkingSlot add(List<ParkingSlot> slots) {
 
-        for (int slot=0;slot<2;slot++) {
+        for (int slot=0;slot<20;slot++) {
             ParkingSlot currentSlot = slots.get(slot);
             if (!currentSlot.isBottomFull()) {
                 currentSlot.setBottomFull(true);
