@@ -51,10 +51,10 @@ public class FloorImpl implements IFloor {
         ticket.setSlotNo(slot.getSlotNo());
         ticket.setVehicleId(vehicle.getVehicleId());
 
-        if(!slot.isBottomFull() ){
+        if(!slot.isTopFull()){
             ticket.setBottom(true);
 
-        }else if(!slot.isTopFull()){
+        }else{
             ticket.setBottom(false);
         }
         return ticket;
@@ -227,8 +227,8 @@ public class FloorImpl implements IFloor {
         cost = (int) Math.ceil(cost);
         ticket.setCost(cost);
 
-        System.out.println(floor.toString());
-        System.out.println("after "+ ticket.toString());
+        System.out.println("On removing vehicle, floor:"+ floor.toString());
+        System.out.println("On removing vehicle, ticket:" + ticket.toString());
         return true;
     }
 
